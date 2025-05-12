@@ -1,1 +1,1 @@
-globa.mp_grid = 0;
+global.mp_grid = 0;

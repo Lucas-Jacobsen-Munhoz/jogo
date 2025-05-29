@@ -1,6 +1,11 @@
+event_inherited();
+
 walk_spd = 1.5;
 
-facing = 1;
+hp_max = 10;
+
+hp = hp_max;
+
 
 aim_dir = 0;
 
@@ -11,6 +16,8 @@ fire_rate = 30;
 can_fire = true;
 
 tiro_speed = 8;
+
+
 
 
 

@@ -1,3 +1,8 @@
+event_inherited();
+hp_max = 15;
+hp = hp_max;
+
+
 alert = false;
 
 alert_dis = 160;

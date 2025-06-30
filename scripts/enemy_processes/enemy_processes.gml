@@ -19,7 +19,7 @@ function check_if_stopped() {
 
 
 
-}
+
 
 function check_for_player(){
 	var _dis = distance_to_object(obj_player);

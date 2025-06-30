@@ -88,30 +88,59 @@ sprite_index = s_player_idle;
 }
 
 function check_fire() {
-	if mouse_check_button(mb_left) {
-		if can_fire{
-			can_fire = false;
-			alarm[0] = fire_rate;
-			
-			var _dir = point_direction(x, y, mouse_x, mouse_y);
-			
-			
-			var _inst = instance_create_layer(x, y, "tiro", obj_tiro);
-			with (_inst) {
-				speed = other.tiro_speed;
-				direction = _dir;
-				image_angle = _dir;
-				owner_id = other;
-				
-			
-			}
-			
-			
-		
-		}
-	}
-}
+    // Definir o delay entre os dois tiros em frames (ajuste conforme necessário)
+    var _double_shot_delay_frames = 5; // Um pequeno delay
 
+    // Se o player não estiver no meio de um ciclo de tiro duplo,
+    // e o botão esquerdo do mouse for pressionado
+    if (!is_double_shooting && mouse_check_button(mb_left)) {
+        if (can_fire) {
+            // Verifica se a sequência especial está ativa no inventário
+            var _special_sequence_active = scr_check_special_sequence(obj_inventario); // Chame seu objeto de inventário aqui
+
+            if (_special_sequence_active) {
+                // Ativa o modo de tiro duplo
+                is_double_shooting = true;
+                double_shot_fired_count = 0; // Reseta o contador de tiros disparados
+                double_shot_delay_timer = 0; // Reseta o timer
+                can_fire = false; // Impede novos tiros normais até o ciclo duplo terminar
+
+                // Dispara o primeiro tiro imediatamente
+                _perform_single_shot(); // Chama a nova função/script para disparar um único tiro
+                double_shot_fired_count++;
+
+            } else {
+                // Tiro normal (se a sequência não estiver ativa)
+                _perform_single_shot(); // Chama a nova função/script para disparar um único tiro
+                can_fire = false; // Ativa o cooldown normal
+                alarm[0] = fire_rate;
+            }
+        }
+    }
+
+    // Lógica para o segundo tiro no modo de tiro duplo
+    if (is_double_shooting) {
+        double_shot_delay_timer++; // Incrementa o timer a cada frame
+
+        if (double_shot_delay_timer >= _double_shot_delay_frames) {
+            // Se o timer atingiu o delay e o segundo tiro ainda não foi disparado
+            if (double_shot_fired_count < 2) {
+                _perform_single_shot(); // Dispara o segundo tiro
+                double_shot_fired_count++;
+            }
+
+            // Se ambos os tiros foram disparados, finaliza o ciclo de tiro duplo
+            if (double_shot_fired_count >= 2) {
+                is_double_shooting = false; // Sai do modo de tiro duplo
+                can_fire = false;           // Ativa o cooldown normal para o próximo clique
+                alarm[0] = fire_rate;       // Inicia o cooldown baseado na sua fire_rate normal
+                double_shot_delay_timer = 0;
+                double_shot_fired_count = 0;
+            }
+        }
+    }
+}
+	
 
 
 
